@@ -3,14 +3,20 @@ const router = express.Router();
 
 const { contacts: ctrl } = require("../../controllers");
 const { validation, ctrlWrapper } = require("../../middlewares");
-const { contactSchema } = require("../../schemas");
-
-const validateMiddleware = validation(contactSchema);
+const { joiSchema, favoriteJoiSchema } = require("../../models/contact");
 
 router.get("/", ctrlWrapper(ctrl.listContacts));
 router.get("/:contactId", ctrlWrapper(ctrl.getContactById));
-router.post("/", validateMiddleware, ctrlWrapper(ctrl.addContact));
+router.post("/", validation(joiSchema), ctrlWrapper(ctrl.addContact));
 router.delete("/:contactId", ctrlWrapper(ctrl.removeContact));
-router.put("/:contactId", validateMiddleware, ctrlWrapper(ctrl.updateContact));
-
+router.put(
+  "/:contactId",
+  validation(joiSchema),
+  ctrlWrapper(ctrl.updateContact)
+);
+router.patch(
+  "/:contactId/favorite",
+  validation(favoriteJoiSchema),
+  ctrlWrapper(ctrl.updateFavorite)
+);
 module.exports = router;
