@@ -2,9 +2,10 @@ const { Contact } = require("../../models");
 const createError = require("http-errors");
 
 const getContactById = async (req, res) => {
+  const { _id } = req.user;
   const { contactId } = req.params;
-  const result = await Contact.findById(contactId);
-  if (!result) {
+  const result = await Contact.find({ owner: _id, _id: contactId });
+  if (result.length === 0) {
     throw createError(404, `Contact with id=${contactId} not found`);
   }
   res.json({
